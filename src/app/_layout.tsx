@@ -18,6 +18,15 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
+        name="qrcode"
+        options={{
+          title: "Qrcode Scanner",
+          tabBarIcon: ({ size, color }) => (
+            <FontAwesome name="qrcode" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="units"
         options={{
           title: "Unit Converter",

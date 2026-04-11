@@ -17,7 +17,7 @@ export default function Index() {
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <View style={styles.header}>
-          <Text style={styles.greeting}>Good Morning 👋</Text>
+          <Text style={styles.greeting}>Hello user👋</Text>
 
           <TextInput
             placeholder="Search tools..."
@@ -38,15 +38,20 @@ export default function Index() {
             />
 
             <ToolCard
-              title="Currency"
+              title="Currency calculator"
               icon="cash"
               onPress={() => router.push("/currency")}
+            />
+            <ToolCard
+              title="Qrcode scanner"
+              icon="scan-outline"
+              onPress={() => router.push("/qrcode")}
             />
           </View>
         </View>
 
         {/* Recent Activity */}
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent Activity</Text>
 
           <View style={styles.activityCard}>
@@ -54,7 +59,7 @@ export default function Index() {
               No recent activity yet
             </Text>
           </View>
-        </View>
+        </View> */}
       </View>
     </SafeAreaView>
   );

@@ -4,82 +4,132 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import ToolCard from "../components/Home/ToolCard";
+import { useState } from "react";
 
 export const currencies = [
-  {
-    code: "USD",
-    name: "US Dollar",
-    symbol: "$",
-    flag: "🇺🇸",
-  },
-  {
-    code: "NGN",
-    name: "Nigerian Naira",
-    symbol: "₦",
-    flag: "🇳🇬",
-  },
-  {
-    code: "GBP",
-    name: "British Pound",
-    symbol: "£",
-    flag: "🇬🇧",
-  },
-  {
-    code: "EUR",
-    name: "Euro",
-    symbol: "€",
-    flag: "🇪🇺",
-  },
-  {
-    code: "CAD",
-    name: "Canadian Dollar",
-    symbol: "C$",
-    flag: "🇨🇦",
-  },
-  {
-    code: "AUD",
-    name: "Australian Dollar",
-    symbol: "A$",
-    flag: "🇦🇺",
-  },
-  {
-    code: "JPY",
-    name: "Japanese Yen",
-    symbol: "¥",
-    flag: "🇯🇵",
-  },
-  {
-    code: "CNY",
-    name: "Chinese Yuan",
-    symbol: "¥",
-    flag: "🇨🇳",
-  },
+  { code: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸" },
+  { code: "NGN", name: "Nigerian Naira", symbol: "₦", flag: "🇳🇬" },
+  { code: "GBP", name: "British Pound", symbol: "£", flag: "🇬🇧" },
+  { code: "EUR", name: "Euro", symbol: "€", flag: "🇪🇺" },
+  { code: "CAD", name: "Canadian Dollar", symbol: "C$", flag: "🇨🇦" },
+  { code: "AUD", name: "Australian Dollar", symbol: "A$", flag: "🇦🇺" },
+  { code: "JPY", name: "Japanese Yen", symbol: "¥", flag: "🇯🇵" },
+  { code: "CNY", name: "Chinese Yuan", symbol: "¥", flag: "🇨🇳" },
 ];
 
 export default function Currency() {
-  const router = useRouter();
+  const [fromValue, setFromValue] = useState("1450");
+  const [toValue, setToValue] = useState("");
+
+  const [fromCurrency, setFromCurrency] = useState("NGN");
+  const [toCurrency, setToCurrency] = useState("USD");
+
+  const [openDropdown, setOpenDropdown] = useState<"from" | "to" | null>(null);
+
+  const swapUnits = () => {
+    setFromCurrency(toCurrency);
+    setToCurrency(fromCurrency);
+  };
+
+  const renderDropdown = (type: "from" | "to") => {
+    const isOpen = openDropdown === type;
+
+    return (
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity
+          style={styles.dropdown}
+          onPress={() =>
+            setOpenDropdown(isOpen ? null : type)
+          }
+        >
+          <Text style={styles.dropdownText}>
+            {type === "from"
+              ? currencies.find(c => c.code === fromCurrency)?.flag
+              : currencies.find(c => c.code === toCurrency)?.flag}{" "}
+            {type === "from" ? fromCurrency : toCurrency}
+          </Text>
+          <Ionicons name="chevron-down" size={16} color="#6B7280" />
+        </TouchableOpacity>
+
+        {isOpen && (
+          <View style={styles.dropdownList}>
+            <FlatList
+              data={currencies}
+              keyExtractor={(item) => item.code}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.dropdownItem}
+                  onPress={() => {
+                    type === "from"
+                      ? setFromCurrency(item.code)
+                      : setToCurrency(item.code);
+                    setOpenDropdown(null);
+                  }}
+                >
+                  <Text style={styles.dropdownItemText}>
+                    {item.flag} {item.code}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
+        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.greeting}>Real Time Conversion</Text>
-
-          <View>
-            <Text style={styles.greeting}>1450.00</Text>
-            <Text>Eur</Text>
-          </View>
+          <Text style={styles.title}>Currency Converter</Text>
+          <Text style={styles.subText}>
+            Convert currencies instantly
+          </Text>
         </View>
 
-     {/*  */}
+        {/* Card */}
+        <View style={styles.card}>
+          {/* From */}
+          <Text style={styles.label}>From</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              value={fromValue}
+              onChangeText={setFromValue}
+              keyboardType="numeric"
+              style={styles.input}
+            />
 
-     
-      
+            {renderDropdown("from")}
+          </View>
+
+          {/* Swap */}
+          <View style={styles.swapWrapper}>
+            <TouchableOpacity
+              style={styles.swapButton}
+              onPress={swapUnits}
+            >
+              <Ionicons name="swap-vertical" size={20} color="#2563EB" />
+            </TouchableOpacity>
+          </View>
+
+          {/* To */}
+          <Text style={styles.label}>To</Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              value={toValue}
+              editable={false}
+              style={[styles.input, styles.resultInput]}
+            />
+
+            {renderDropdown("to")}
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -92,82 +142,107 @@ const styles = StyleSheet.create({
   },
 
   inner: {
-    padding: 21,
+    padding: 16,
     gap: 24,
   },
 
   header: {
-    gap: 12,
-    paddingTop: 10,
+    gap: 4,
   },
 
-  greeting: {
+  title: {
     fontSize: 24,
     fontWeight: "700",
     color: "#111827",
   },
 
-  searchInput: {
-    height: 48,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
+  subText: {
     fontSize: 14,
-  },
-
-  section: {
-    gap: 12,
-  },
-
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
-  },
-
-  grid: {
-    flexDirection: "row",
-    gap: 12,
+    color: "#6B7280",
   },
 
   card: {
-    flex: 1,
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 16,
-    gap: 12,
+    gap: 16,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 3,
   },
 
-  iconWrapper: {
-    backgroundColor: "#EFF6FF",
-    padding: 10,
-    borderRadius: 12,
-    alignSelf: "flex-start",
+  label: {
+    fontSize: 12,
+    color: "#6B7280",
   },
 
-  cardText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#111827",
+  inputRow: {
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
   },
 
-  activityCard: {
-    backgroundColor: "#FFFFFF",
-    padding: 16,
+  input: {
+    flex: 1,
+    height: 50,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "#E5E7EB",
+    paddingHorizontal: 12,
+    fontSize: 16,
+    backgroundColor: "#FFFFFF",
   },
 
-  activityText: {
-    color: "#6B7280",
+  resultInput: {
+    backgroundColor: "#F3F4F6",
+  },
+
+  dropdown: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 12,
+    height: 50,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    backgroundColor: "#FFFFFF",
+    minWidth: 110,
+  },
+
+  dropdownText: {
+    fontSize: 14,
+    color: "#111827",
+  },
+
+  dropdownList: {
+    position: "absolute",
+    top: 55,
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
+    maxHeight: 200,
+    zIndex: 1000,
+  },
+
+  dropdownItem: {
+    padding: 12,
+  },
+
+  dropdownItemText: {
     fontSize: 14,
   },
-  
+
+  swapWrapper: {
+    alignItems: "center",
+  },
+
+  swapButton: {
+    backgroundColor: "#EFF6FF",
+    padding: 10,
+    borderRadius: 50,
+  },
 });
