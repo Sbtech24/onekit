@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState,useEffect} from "react";
+import convert from "../lib/convert";
 
 export const currencies = [
   { code: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸" },
@@ -25,6 +26,7 @@ export default function Currency() {
   const [fromValue, setFromValue] = useState("1450");
   const [toValue, setToValue] = useState("");
 
+
   const [fromCurrency, setFromCurrency] = useState("NGN");
   const [toCurrency, setToCurrency] = useState("USD");
 
@@ -34,6 +36,14 @@ export default function Currency() {
     setFromCurrency(toCurrency);
     setToCurrency(fromCurrency);
   };
+
+  useEffect(()=>{
+    const runConversion =async ()=>{
+    const data = await convert(fromCurrency,toCurrency,parseInt(fromValue))
+   setToValue(data)
+    }
+    runConversion()
+  },[fromValue,fromCurrency,toCurrency])
 
   const renderDropdown = (type: "from" | "to") => {
     const isOpen = openDropdown === type;
