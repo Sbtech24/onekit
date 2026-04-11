@@ -2,8 +2,11 @@ import { Tabs } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Octicons from "@expo/vector-icons/Octicons";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
 export default function RootLayout() {
   return (
+    <SafeAreaProvider>
     <Tabs screenOptions={{headerShown:false}}>
       <Tabs.Screen
         name="index"
@@ -33,5 +36,6 @@ export default function RootLayout() {
         }}
       />
     </Tabs>
+    </SafeAreaProvider>
   );
 }
