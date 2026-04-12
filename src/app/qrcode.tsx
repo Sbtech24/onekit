@@ -28,16 +28,21 @@ export default function Qrcode() {
     return <View />;
   }
 
-  if (!permission.granted) {
-    return (
-      <View style={styles.container}>
-        <Text>We need permission to show camera</Text>
-        <TouchableOpacity style={styles.button} onPress={requestPermission}>
-          <Text style={styles.buttonText}>Allow Camera</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+if (!permission.granted) {
+  return (
+    <View style={styles.center}>
+      <Text style={styles.permissionTitle}>Camera Permission Needed</Text>
+
+      <Text style={styles.permissionText}>
+        We need access to your camera to scan QR codes
+      </Text>
+
+      <TouchableOpacity style={styles.button} onPress={requestPermission}>
+        <Text style={styles.buttonText}>Grant Permission</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 
   return (
     <SafeAreaView style={styles.container}>
@@ -88,6 +93,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F9FAFB",
   },
+  center: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  padding: 24,
+  backgroundColor: "#F9FAFB",
+  gap: 12,
+},
+
+permissionTitle: {
+  fontSize: 20,
+  fontWeight: "700",
+  color: "#111827",
+  textAlign: "center",
+},
+
+permissionText: {
+  fontSize: 14,
+  color: "#6B7280",
+  textAlign: "center",
+  lineHeight: 20,
+},
 
   inner: {
     flex: 1,
@@ -158,17 +185,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
 
-  permissionText: {
-    textAlign: "center",
-    marginBottom: 16,
-  },
 
   button: {
     backgroundColor: "#2563EB",
